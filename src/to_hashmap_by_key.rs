@@ -5,6 +5,11 @@ pub trait ToHashMapByKey: Iterator {
         self,
         f: impl Fn(&<Self as Iterator>::Item) -> K,
     ) -> HashMap<K, <Self as Iterator>::Item>;
+
+    fn hashmap_by_key_val<K: Eq + Hash, V>(
+        self,
+        f: impl Fn(<Self as Iterator>::Item) -> (K, V),
+    ) -> HashMap<K, V>;
 }
 
 impl<I: Iterator> ToHashMapByKey for I {
@@ -14,6 +19,13 @@ impl<I: Iterator> ToHashMapByKey for I {
     ) -> HashMap<K, <Self as Iterator>::Item> {
         self.into_iter().map(|v| (f(&v), v)).collect()
     }
+
+    fn hashmap_by_key_val<K: Eq + Hash, V>(
+        self,
+        f: impl Fn(<Self as Iterator>::Item) -> (K, V),
+    ) -> HashMap<K, V> {
+        self.into_iter().map(f).collect()
+    }
 }
 
 #[cfg(test)]
@@ -21,21 +33,24 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_vec() {
+    fn test_hashmap_by_key() {
         let vals = vec![2, 4, 6];
 
-        let calculated_iter = vals
-            .iter()
-            .hashmap_by_key(|v| **v / 2)
-            .into_iter()
-            .map(|(k, v)| (k, *v))
-            .collect::<HashMap<_, _>>();
-        let calculated_into_iter = vals.into_iter().hashmap_by_key(|v| *v / 2).clone();
-
         let expected = HashMap::from_iter(vec![(1, 2), (2, 4), (3, 6)]);
+        let calculated = vals.into_iter().hashmap_by_key(|v| *v / 2).clone();
+        assert_eq!(expected, calculated);
+    }
 
-        assert!(calculated_iter == calculated_into_iter);
-        assert!(calculated_iter == expected);
-        assert!(expected == calculated_into_iter);
+    #[test]
+    fn test_hashmap_by_key_val() {
+        let vals = vec![2, 4, 6];
+
+        let expected = HashMap::from_iter(vec![(1, 4), (2, 8), (3, 12)]);
+        let calculated = vals
+            .into_iter()
+            .hashmap_by_key_val(|v| (v / 2, v * 2))
+            .clone();
+
+        assert_eq!(expected, calculated);
     }
 }
