@@ -17,14 +17,14 @@ impl<I: Iterator> ToHashMapByKey for I {
         self,
         f: impl Fn(&<Self as Iterator>::Item) -> K,
     ) -> HashMap<K, <Self as Iterator>::Item> {
-        self.into_iter().map(|v| (f(&v), v)).collect()
+        self.map(|v| (f(&v), v)).collect()
     }
 
     fn hashmap_by_key_val<K: Eq + Hash, V>(
         self,
         f: impl Fn(<Self as Iterator>::Item) -> (K, V),
     ) -> HashMap<K, V> {
-        self.into_iter().map(f).collect()
+        self.map(f).collect()
     }
 }
 
