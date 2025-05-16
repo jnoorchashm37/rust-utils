@@ -8,3 +8,14 @@ edition = "2024"
 name = "rust_utils"
 
 [dependencies]
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt"] }
+
+
+[features]
+default = ["full"]
+full = ["or-else-async", "to-hashmap-by-key"]
+
+to-hashmap-by-key = []
+or-else-async = []
