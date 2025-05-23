@@ -37,7 +37,7 @@ mod tests {
         let vals = vec![2, 4, 6];
 
         let expected = HashMap::from_iter(vec![(1, 2), (2, 4), (3, 6)]);
-        let calculated = vals.into_iter().hashmap_by_key(|v| *v / 2).clone();
+        let calculated = vals.into_iter().hashmap_by_key(|v| *v / 2);
         assert_eq!(expected, calculated);
     }
 
@@ -46,10 +46,7 @@ mod tests {
         let vals = vec![2, 4, 6];
 
         let expected = HashMap::from_iter(vec![(1, 4), (2, 8), (3, 12)]);
-        let calculated = vals
-            .into_iter()
-            .hashmap_by_key_val(|v| (v / 2, v * 2))
-            .clone();
+        let calculated = vals.into_iter().hashmap_by_key_val(|v| (v / 2, v * 2));
 
         assert_eq!(expected, calculated);
     }
